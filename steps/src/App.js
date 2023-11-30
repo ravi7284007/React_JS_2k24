@@ -7,6 +7,7 @@ const messages = [
 
 function App() {
 const [step, setstep] = useState(1);
+const [isOpen, setIsOpen] = useState(true)
 
 
   const prevHandler = () =>{
@@ -17,7 +18,13 @@ const [step, setstep] = useState(1);
     if( step < 3)
     setstep(step + 1)
   }
+  const toggleHander = ()=>{
+    setIsOpen(!isOpen)
+  }
   return (
+    <>
+    <button className='close' onClick={toggleHander}>&times;</button>
+    {isOpen && 
       <div className="steps">
         <div className="numbers">
           <div className={`${step >= 1 ? 'active': ''}`}>1</div>
@@ -30,6 +37,8 @@ const [step, setstep] = useState(1);
           <button onClick={nextHandler} style={{backgroundColor: 'deepskyblue', color: 'white'}}>Next</button>
         </div>
       </div>
+      }
+      </>
   );
 }
 
