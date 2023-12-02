@@ -24,7 +24,8 @@ const [isOpen, setIsOpen] = useState(true)
   return (
     <>
     <button className='close' onClick={toggleHander}>&times;</button>
-    {isOpen && 
+    {
+    isOpen && 
       <div className="steps">
         <div className="numbers">
           <div className={`${step >= 1 ? 'active': ''}`}>1</div>
