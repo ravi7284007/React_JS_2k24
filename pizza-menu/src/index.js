@@ -1,27 +1,19 @@
 import React from 'react';
 import ReactDOM  from 'react-dom/client';
-import pizzaData from './data';
+import Header from './components/Header';
+import Pizza from './components/Pizza';
+import './index.css'
 
 function App(){
-    return <Pizza/>
+    return <div className='container'>
+    <Header/>
+        <main>
+    <Pizza/>
+    </main>
+    </div>
 }
 
-function Pizza(){
-    return(
-        <>
-        {
-            pizzaData.map(item => {
-                return <>
-                <img src={item.photoName} alt="" />
-                <h2>{item.name}  
-                <small>(${item.price})</small></h2>
-                <h3>{item.ingredients}</h3>
-                </>
-            })
-        }
-        </>
-    )
-}
+
 
 // React v18
 const root = ReactDOM.createRoot(document.getElementById("root"))
