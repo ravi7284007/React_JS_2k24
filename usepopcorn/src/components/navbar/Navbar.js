@@ -1,15 +1,5 @@
-import Logo from "./Logo";
-import NumResult from "./NumResult";
-import Search from "./Search";
-
-function Navbar({ movies }) {
-  return (
-    <nav className="nav-bar">
-      <Logo />
-      <Search />
-      <NumResult movies={movies} />
-    </nav>
-  );
+function Navbar({ children }) {
+  return <nav className="nav-bar">{children}</nav>;
 }
 
 export default Navbar;
