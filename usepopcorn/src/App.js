@@ -9,6 +9,7 @@ import MovieList from "./components/movieList/MovieList";
 import Box from "./components/Box";
 import WatchedSummary from "./components/WatchList/WatchedSummary";
 import WatchedMovieList from "./components/WatchList/WatchedMovieList";
+import SelectedMovie from "./components/selectedMovie/SelectedMovie";
 
 const KEY = `a15d2a7`;
 
@@ -19,6 +20,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedID] = useState(null);
+
+  function handleSelectMovie(id) {
+    setSelectedID((selectedId) => (id === selectedId ? null : id));
+  }
+
+  function handleCloseMovie(id) {
+    setSelectedID(null);
+  }
 
   useEffect(
     function () {
@@ -71,12 +80,25 @@ export default function App() {
         )} */}
         <Box>
           {isLoading && <Loader />}
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !error && (
+            <MovieList handleSelectMovie={handleSelectMovie} movies={movies} />
+          )}
           {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {selectedId ? (
+            <SelectedMovie
+              onCloseMovie={handleCloseMovie}
+              selectedId={selectedId}
+              KEY={KEY}
+            />
+          ) : (
+            <>
+              {" "}
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList watched={watched} selectedId={selectedId} />
+            </>
+          )}{" "}
         </Box>
       </Main>
     </>
