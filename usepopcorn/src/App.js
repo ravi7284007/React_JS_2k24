@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Navbar from "./components/navbar/Navbar";
-import { tempMovieData, tempWatchedData } from "./components/data";
 import NumResult from "./components/navbar/NumResult";
 import Logo from "./components/navbar/Logo";
 import Search from "./components/navbar/Search";
@@ -10,7 +9,7 @@ import Box from "./components/Box";
 import WatchedSummary from "./components/WatchList/WatchedSummary";
 import WatchedMovieList from "./components/WatchList/WatchedMovieList";
 import SelectedMovie from "./components/selectedMovie/SelectedMovie";
-
+import Loader from "./components/loader/Loader";
 const KEY = `a15d2a7`;
 
 export default function App() {
@@ -29,15 +28,28 @@ export default function App() {
     setSelectedID(null);
   }
 
+  function handleAddWatched(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteWatched(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
+
   useEffect(
     function () {
+      const controller = new AbortController();
+
       const fetchMovie = async () => {
         try {
           setIsLoading(true);
           setError("");
 
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            {
+              signal: controller.signal,
+            }
           );
 
           if (!res.ok)
@@ -47,9 +59,13 @@ export default function App() {
           if (data.Response === "False") throw new Error("Movie not found");
 
           setMovies(data.Search);
+          setError("");
         } catch (error) {
           console.error(error.message);
-          setError(error.message);
+
+          if (error.name !== "AbortError") {
+            setError(error.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -59,7 +75,12 @@ export default function App() {
         setError("");
         return;
       }
+      handleCloseMovie();
       fetchMovie();
+
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -91,22 +112,24 @@ export default function App() {
               onCloseMovie={handleCloseMovie}
               selectedId={selectedId}
               KEY={KEY}
+              onAddWatched={handleAddWatched}
+              watched={watched}
             />
           ) : (
             <>
               {" "}
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} selectedId={selectedId} />
+              <WatchedMovieList
+                onDeleteWatched={handleDeleteWatched}
+                watched={watched}
+                selectedId={selectedId}
+              />
             </>
           )}{" "}
         </Box>
       </Main>
     </>
   );
-}
-
-function Loader() {
-  return <p className="loader">Loading.....</p>;
 }
 
 function ErrorMessage({ message }) {
